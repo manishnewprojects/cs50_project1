@@ -1,0 +1,88 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+
+{% include 'html_includes/header.html' %}
+
+</head>
+
+<!-- Primary Page Layout -->
+
+<body>
+
+<main role="main" class="inner cover">
+
+<div class="container">
+
+  <!-- Page Heading -->
+  <div align="center">
+ 
+  {% if user %}
+        <p><h1>Hello! {{ user }} </h1>   </p> 
+  {% endif %}
+
+  <p class="mv_header_title">  <h1> vaidyaLib - Find the books you are looking for </h1>  </p> 
+  <h2> <a href="/logout">Logout</a> </h2>
+
+   <form class="form-inline" action="{{url_for('search')}}" method="post">
+        <input class="form-control" type="text" placeholder="Search anyhing" name="search_term">
+        <button class="btn btn-success" type="submit">Search</button>
+    </form>
+         
+ 
+{% if search_results %}
+     
+      <!-- Table headers -->
+      <h2> Search Results </h2>
+
+<div class="tg-wrap">  <table class="tg">
+     <thead>
+    
+        <tr style="color: green; ">     
+          <th>Title</th> 
+          <th>Author</th>  
+          <th>Year</th> 
+          <th>ISBN</th>  
+          <th>Num of reviews</th> 
+          <th>Review Avg.</th> 
+        </tr> 
+     
+
+  </thead>
+
+  <tbody>
+{% for search_result_item in search_results %}
+      <tr>
+          <td class="tg-0lax"> <a href="{{ url_for('api', isbn=search_result_item.isbn) }}"> {{ search_result_item.title }} </a></td>
+          <td class="tg-0lax"> {{ search_result_item.author }}</td>
+          <td class="tg-0lax"> {{ search_result_item.year }}</td>
+          <td class="tg-0lax"> {{ search_result_item.isbn }}</td>
+          <td class="tg-0lax"> {{ search_result_item.review_count }}</td>
+          <td class="tg-0lax"> {{ search_result_item.average_score }}</td>
+        
+      </tr>
+
+{% endfor %}
+ </tbody>
+
+</table>  
+
+{% endif %}
+
+</div>
+
+</div>
+<!-- /.container -->
+
+{% include 'html_includes/end_js.html' %}
+
+</main>
+
+ 
+</body>
+</html>
+
+
+
