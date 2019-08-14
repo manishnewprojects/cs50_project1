@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+
+{% include 'html_includes/header.html' %}
+
+</head>
+
+<!-- Primary Page Layout -->
+
+<body>
+
+<main role="main" class="inner cover">
+
+<div class="container">
+
+  <!-- Page Heading -->
+  <div align="center">
+
+  <div class="mv_header_title">
+    <h2> Welcome to vaidyaLib by Manish Vaidya </h2>
+    <h2> Find all your favorite books </h2>
+    
+</div>
+ 
+
+<p>
+  <hr>
+  <h4> <u> Book Details </u> </h4>
+</p>
+
+<!-- {% print(goodreads_results," === good read ===", goodreads_results['books'][0]['isbn'], "  ", book) %} -->
+<div class="tg-wrap" style="table-layout:fixed">  <table class="tg">
+   <thead>
+  
+      <tr style="color: green; ">     
+        <th>Title</th> 
+        <th>Author</th>  
+        <th>Year</th> 
+        <th>ISBN</th>  
+        <th style="word-wrap:break-word;">Avg. Rating(vaidyaLib)</th> 
+
+        <th style="word-wrap:break-word;" >Num of ratings (Goodreads.com)</th> 
+        <th style="word-wrap:break-word;">Avg. Rating(Goodreads.com)</th> 
+      </tr> 
+   
+
+</thead>
+<tbody>
+       <tr>
+          <td class="tg-0lax"> {{ book.title }}          </td>
+          <td class="tg-0lax"> {{ book.author }}         </td>
+          <td class="tg-0lax"> {{ book.year }}           </td>
+          <td class="tg-0lax"> {{ book.isbn }}           </td>
+          <td class="tg-0lax"> {{ book.average_rating }} </td>
+
+          <td class="tg-0lax"> {{ goodreads_results['books'][0]['ratings_count'] }} </td>
+          <td class="tg-0lax"> {{ goodreads_results['books'][0]['average_rating'] }}</td>
+        
+      </tr>
+
+  </tbody>
+ 
+
+</table>  
+
+<!-- WORKS ABOVE -->
+
+ 
+
+{%if (session['current_book']  == book.isbn) and (session['user_has_rated'] == True) %}
+<h4> Thank you for rating </h4> 
+
+{%else%}
+
+<br><br>
+<label for="rating">Rate this book</label>
+
+<form  action="{{url_for('rate_book') }}" method="POST">
+    <select style="width: 100px"  id="rating" name="value">
+    {%for i in range(5)%}
+      <option value="{{i+1}}">{{i+1}}</option>
+    {%endfor%}
+    </select>
+    <br><br>
+     <button class="btn btn-success" required="required" type="submit">Submit Rating</button> 
+ </form>
+
+
+{%endif%}
+
+
+{%if (session['current_book']  == book.isbn) and (session['user_has_reviewed'] == True) %}
+<h4> Thank you for the review </h4> 
+
+{%else%}
+
+<br><br>
+<label for="rating">Review this book</label>
+
+<form  action="{{url_for('review_book') }}" method="POST">
+  <textarea rows="4" cols="50" name="review" id="review" required="required">Write your review
+  </textarea>
+  <br><br>
+  <button class="btn btn-success" required="required" type="submit">Submit Review</button> 
+ </form>
+
+
+{%endif%}
+
+
+
+<h4> Current Reviews for this book on vaidyaLib </h4>
+
+
+<a href="{{ url_for('reviews_fetch') }}"> see reviews </a>
+
+{% if reviews  %}
+===> {{reviews[0].username}}   {{reviews[0].review}}
+{%endif%}
+
+<div class="tg-wrap">  <table class="tg">
+   <thead>
+  
+      <tr style="color: green; ">     
+        <th>User</th> 
+        <th>Review</th>  
+      </tr> 
+   
+
+    </thead>
+
+    <tbody>
+    {% for review_item in reviews %}
+          <tr>
+              <td class="tg-0lax"> {{ review_item.username }}</td>
+              <td class="tg-0lax"> {{ review_tem.review }}</td>
+          </tr>
+
+    {% endfor %}
+
+     </tbody>
+
+</table>  
+
+</div>
+<!-- WORKS BELOW -->
+
+<p>
+     <h4> Back to <a href="{{url_for('search')}}"> Search </a> </h4>
+</p>
+
+</div>
+<!-- /.container -->
+
+{% include 'html_includes/end_js.html' %}
+
+</main>
+
+ 
+</body>
+</html>
+
+
+

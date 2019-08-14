@@ -1,3 +1,39 @@
+*!
+ * Start Bootstrap - 3 Col Portfolio (https://startbootstrap.com/template-overviews/3-col-portfolio)
+ * Copyright 2013-2018 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-3-col-portfolio/blob/master/LICENSE)
+ */
+
+/* Main CSS */
+html, body {
+  height: 100%;
+  font-family: cmr;
+  background: lightgrey;
+  }
+
+
+.mv_nav_items {
+    font-size: 30px;
+    line-height: 40px;
+}
+
+
+.mv_header_title {
+    font-size: 40px;
+}
+
+
+/* 700px for anything less than tablet portrait mode */
+@media (max-width: 700px) {
+    .mv_nav_items {
+        font-size: 20px;
+    }
+    .mv_header_title {
+    font-size: 20px;
+  }
+}
+
+
 .tg  {border-collapse:collapse;border-spacing:0;margin:0px auto;}
 
 .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
