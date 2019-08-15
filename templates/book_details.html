@@ -21,7 +21,8 @@
   <div class="mv_header_title">
     <h2> Welcome to vaidyaLib by Manish Vaidya </h2>
     <h2> Find all your favorite books </h2>
-    
+    <h2> Logged in as {{ session['username'] }}</h2>   
+    <h4><a href="/logout">Logout</a></h4>
 </div>
  
 
@@ -66,8 +67,39 @@
 </table>  
 
 <!-- WORKS ABOVE -->
+{%if reviews != null %}
+<h4> Current Reviews for this book on vaidyaLib </h4>
 
- 
+<div class="tg-wrap">  <table class="tg">
+   <thead>
+  
+      <tr style="color: green; ">     
+        <th>User</th> 
+        <th>Review</th>  
+      </tr> 
+   
+
+    </thead>
+
+    <tbody>
+    {% for review_item in reviews %}
+          <tr>
+              <td class="tg-0lax"> {{ review_item.username }}</td>
+              <td class="tg-0lax"> {{ review_item.review }}</td>
+          </tr>
+
+    {% endfor %}
+
+     </tbody>
+
+</table>  
+
+{%else%}
+  <h4> Zero reviews for this book on vaidyaLib. Add one? see below </h4>
+
+  {% endif %}
+
+</div>
 
 {%if (session['current_book']  == book.isbn) and (session['user_has_rated'] == True) %}
 <h4> Thank you for rating </h4> 
@@ -91,12 +123,12 @@
 {%endif%}
 
 
+<br><br>
 {%if (session['current_book']  == book.isbn) and (session['user_has_reviewed'] == True) %}
 <h4> Thank you for the review </h4> 
 
 {%else%}
 
-<br><br>
 <label for="rating">Review this book</label>
 
 <form  action="{{url_for('review_book') }}" method="POST">
@@ -110,41 +142,6 @@
 {%endif%}
 
 
-
-<h4> Current Reviews for this book on vaidyaLib </h4>
-
-
-<a href="{{ url_for('reviews_fetch') }}"> see reviews </a>
-
-{% if reviews  %}
-===> {{reviews[0].username}}   {{reviews[0].review}}
-{%endif%}
-
-<div class="tg-wrap">  <table class="tg">
-   <thead>
-  
-      <tr style="color: green; ">     
-        <th>User</th> 
-        <th>Review</th>  
-      </tr> 
-   
-
-    </thead>
-
-    <tbody>
-    {% for review_item in reviews %}
-          <tr>
-              <td class="tg-0lax"> {{ review_item.username }}</td>
-              <td class="tg-0lax"> {{ review_tem.review }}</td>
-          </tr>
-
-    {% endfor %}
-
-     </tbody>
-
-</table>  
-
-</div>
 <!-- WORKS BELOW -->
 
 <p>

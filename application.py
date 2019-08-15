@@ -1,3 +1,5 @@
+#Manish Vaidya, 2019, CS50w
+
 import os
 
 from flask import Flask, session, render_template, request, flash 
@@ -10,7 +12,10 @@ from flask import json, jsonify
 
 app = Flask(__name__)
 
+#Goodreads API key
 app.config['GOODREADS_KEY']	 = '6Ck8APh3scMY0Ix0NDcA'
+
+#Defs to allow session
 app.config['SESSION_TYPE']	 = 'filesystem'
 app.secret_key 				 = os.urandom(12)
  
@@ -19,6 +24,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ktvjqnlkicstdh:12d3502af6b551ee281300b1a3fe36f6646c953d9eeeaf44b25afde404c29b65@ec2-174-129-41-127.compute-1.amazonaws.com:5432/d1r9eob107ife4'
 db = SQLAlchemy(app)
 
+#Database models for Users, Books, Reviews
 class user(db.Model):
 	__tablename__ = "user_info"
 	id 		      = db.Column(db.Integer, primary_key=True)
@@ -39,8 +45,8 @@ class book_data(db.Model):
  
 class book_reviews(db.Model):
 	__tablename__ = "book_reviews"
-	isbn          		= db.Column(db.String(80), unique=True, primary_key=True)
-	username          	= db.Column(db.String(80))
+	isbn          		= db.Column(db.String(80))
+	username          	= db.Column(db.String(80), primary_key=True)
 	review 		   		= db.Column(db.String(400))
 	 
 
@@ -73,6 +79,7 @@ def login():
 
 	return render_template("login.html", error_state = error)
 
+
 @app.route('/register', methods=["GET","POST"])
 def register():
 	if request.method == "POST":
@@ -101,6 +108,7 @@ def search():
 
 	session['first_login'] = True
 	session['user_has_rated'] = False
+	session['user_has_reviewed'] = False
 	uname = session['username']  
 
 
@@ -120,8 +128,8 @@ def search():
 		else:
 		# display results
 			return render_template("search.html", user=uname, search_results=search_results)
-
 	return render_template("search.html")
+
 
 @app.route('/api/<isbn>', methods=["GET","POST"])
 def vaidyalib_API(isbn):
@@ -148,15 +156,26 @@ def vaidyalib_API(isbn):
 
 	return render_template("search.html")
 
+
+
 @app.route('/book_details/<isbn>', methods=["GET","POST"])
 def book_details(isbn):
 	if request.method == "GET":
 		session['current_book']=isbn
 
+		reviews = book_reviews.query.filter(book_reviews.isbn == isbn).all()
+
+		for reviewed_by_current_user in reviews:
+			if (reviewed_by_current_user.username.strip() == session['username'].strip()):
+				session['user_has_reviewed'] = True
+
 		goodreads_results = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "6Ck8APh3scMY0Ix0NDcA", "isbns": isbn})
+
 		search_results = book_data.query.filter(book_data.isbn == isbn).first()
-		return render_template("book_details.html", book = search_results, goodreads_results = goodreads_results.json() )
+
+		return render_template("book_details.html", book = search_results, goodreads_results = goodreads_results.json(), reviews=reviews )
 	return render_template("search.html")
+
 
 
 @app.route('/rate_book', methods=["GET","POST"])
@@ -181,13 +200,12 @@ def rate_book():
 		else:
 			current_rating.number_of_ratings = 1
 			current_rating.average_rating    = rating
-
 		db.session.commit()
-		 
 
 		return redirect(url_for('book_details', isbn=session['current_book']))
-
 	return url_for('book_details', isbn=session['current_book'])
+
+
 
 @app.route('/review_book', methods=["GET","POST"])
 def review_book():
@@ -212,15 +230,6 @@ def review_book():
 	return url_for('book_details', isbn=session['current_book'])
 
 
-@app.route('/reviews_get', methods=["GET","POST"])
-def reviews_fetch():
-	if request.method == "POST":
-		reviews = book_reviews.query.filter_by(isbn = session['current_book']).all()
-		print("reviews", reviews[0].review)
-
-		return render_template("book_details.html", reviews = reviews)
-
-	return render_template("book_details.html")
 
 @app.route("/logout")
 def logout():
