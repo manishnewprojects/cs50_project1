@@ -50,6 +50,7 @@ class book_reviews(db.Model):
 	review 		   		= db.Column(db.String(400))
 	 
 
+#Base 
 @app.route('/')
 def index():
 	if not session.get('logged_in'):
@@ -102,7 +103,7 @@ def register():
 	return render_template("register.html", error = error)
 
 
-
+#Search results page
 @app.route('/search', methods=["GET","POST"])
 def search():
 
@@ -130,7 +131,7 @@ def search():
 			return render_template("search.html", user=uname, search_results=search_results)
 	return render_template("search.html")
 
-
+#API for Book data
 @app.route('/api/<isbn>', methods=["GET","POST"])
 def vaidyalib_API(isbn):
 	if request.method == "GET":
@@ -143,7 +144,7 @@ def vaidyalib_API(isbn):
 				"year"  		: search_results.year,
 				"isbn" 			: search_results.isbn,
 				"review_count"  : search_results.review_count,
-				"average_score" : search_results.average_rating
+				"average_score" : str(search_results.average_rating)
 			}
 
 	 		response = jsonify(book_info)
@@ -157,7 +158,7 @@ def vaidyalib_API(isbn):
 	return render_template("search.html")
 
 
-
+#Get book info
 @app.route('/book_details/<isbn>', methods=["GET","POST"])
 def book_details(isbn):
 	if request.method == "GET":
